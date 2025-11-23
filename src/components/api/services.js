@@ -14,4 +14,4 @@ return config;
 });
 
 
-export default axiosClient;
+export default apiClient;
