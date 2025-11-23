@@ -1,4 +1,4 @@
-import  apiClient  from './services';
+import  {apiClientMultipart ,apiClient}  from './services';
 import { API_BASE_URL, AUTH_URLS, TASK_URLS } from './apiUrls';
 
 
@@ -69,24 +69,132 @@ export async function loginUser(data) {
 
 
 // GET tasks with pagination, filters, search, ordering
-export const fetchTasks = (params) =>
-  apiClient.get(TASK_URLS.LIST, { params });
+export async function fetchTasks(params = {}) {
+  try {
+    const response = await apiClient.get(TASK_URLS.LIST_CREATE, { params });
 
+    return {
+      success: true,
+      data: response.data.results,
+      pagination: {
+        next: response.data.next,
+        prev: response.data.previous,
+        count: response.data.count,
+      },
+    };
+  } catch (error) {
+    console.log("Fetch Tasks Error:", error);
+
+    let message = "Failed to load tasks";
+
+    if (error.response?.data?.detail) {
+      message = error.response.data.detail;
+    }
+
+    return {
+      success: false,
+      message,
+    };
+  }
+}
+
+///////////////////////////////////////////////////////////////// fetch single task //////////////////////////////////////
 // GET single task
-export const fetchTask = (id) =>
-  apiClient.get(`/tasks/${id}/`);
+export async function fetchSingleTask(id) {
+    console.log("id",id);
+    
+  try {
+    const response = await apiClient.get(TASK_URLS.GET_UPDATE(id));
 
+    console.log("response data",response);
+      return {
+      success: true,
+      data: response.data,
+    };
+    
+  } catch (error) {
+    console.log("Fetch Single Task Error:", error);
+
+    let message = "Failed to load task";
+
+    if (error.response?.data?.detail) {
+      message = error.response.data.detail;
+    }
+
+    return {
+      success: false,
+      message,
+    };
+  }
+}
+
+
+
+
+////////////////////////////////////////////////////////////////// crate update  task /////////////////////////////////////
 // CREATE task
 export const createTask = (data) =>
-  apiClient.post("/tasks/", data);
+  apiClientMultipart.post(TASK_URLS.LIST_CREATE, data);
 
 // UPDATE task
 export const updateTask = (id, data) =>
-  apiClient.patch(`/tasks/${id}/`, data);
+  apiClientMultipart.patch(TASK_URLS.GET_UPDATE(id), data);
 
-// DELETE task (soft delete)
-export const deleteTask = (id) =>
-  apiClient.delete(`/tasks/${id}/`);
+// CREATE task/UPDATE task
+export async function handleTaskSubmit(taskId, data) {
+    console.log("data",data);
+    
+  try {
+    let response;
+
+    if (taskId) {
+      response = await updateTask(taskId, data);
+    } else {
+      response = await createTask(data);
+    }
+
+    return {
+      success: true,
+      data: response.data,
+    };
+  } catch (error) {
+    console.log("Task API Error:", error);
+
+    let message = "Task operation failed";
+
+    if (error.response?.data?.detail) {
+      message = error.response.data.detail;
+    }
+
+    return {
+      success: false,
+      message,
+    };
+  }
+}
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////////////// DELETE task (soft delete)///////////////////////////////////////////////
+export const deleteTask = async (id) => {
+  try {
+    const response = await apiClient.delete(TASK_URLS.GET_UPDATE(id));
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Failed to delete task:", error);
+    // Optional: extract error message if backend sends it
+    const message =
+      error.response?.data?.message || "Something went wrong while deleting the task.";
+    return { success: false, message };
+  }
+};
+
+
 
 // BULK CREATE
 export const bulkCreateTask = (data) =>
@@ -103,4 +211,27 @@ export const uploadFile = (formData) =>
   });
 
 
-  
+
+
+//   fetch all tags
+export async function fetchAllTags() {
+  try {
+    const response = await apiClient.get(TASK_URLS.TAG_LIST);
+    console.log("my response",response);
+    
+    return {
+        success: true,
+        data: response.data.results,
+        };
+    } catch (error) {
+    console.log("Fetch Tags Error:", error);
+    let message = "Failed to load tags";
+    if (error.response?.data?.detail) {
+        message = error.response.data.detail;
+    }
+    return {
+        success: false,
+        message,
+    };
+  }
+}

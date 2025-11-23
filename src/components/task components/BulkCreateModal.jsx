@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { bulkCreateTask } from "../../api/api_functions";
+import { bulkCreateTask } from "../api/api_functions";
+
 
 function BulkCreateModal({ onClose, onSuccess }) {
   const [rawInput, setRawInput] = useState("");

@@ -16,8 +16,12 @@ ME: '/auth/me/',
 
 
 export const TASK_URLS = {
-LIST: '/task-routes/tasks/',
-DETAIL: (id) => `${API_BASE_URL}/tasks/${id}/`,
+LIST_CREATE: '/tasks-routes/tasks/',
+GET_UPDATE: (id) => `/tasks-routes/tasks/${id}/`,
 COMMENTS: (id) => `${API_BASE_URL}/tasks/${id}/comments/`,
 ATTACH: (id) => `${API_BASE_URL}/tasks/${id}/attachments/`,
+
+
+// tag api urls
+TAG_LIST : '/tasks-routes/tags/',
 };
