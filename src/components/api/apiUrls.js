@@ -20,6 +20,7 @@ export const TASK_URLS = {
 LIST_CREATE: '/tasks-routes/tasks/',
 GET_UPDATE: (id) => `/tasks-routes/tasks/${id}/`,
 ASSIGN_USER: (task_id,user_id) => `/tasks-routes/tasks/${task_id}/assign-user/${user_id}/`,
+BULK_CREATE: '/tasks-routes/tasks/bulk-create/',
 
 
 // tag api urls

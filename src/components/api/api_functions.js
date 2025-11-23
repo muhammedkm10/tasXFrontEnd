@@ -177,6 +177,35 @@ export async function handleTaskSubmit(taskId, data) {
 
 
 
+// bulk create tasks
+export async function bulkCreateTask(data) {
+    console.log("data",data);
+    
+  try {
+    const response = await apiClient.post(TASK_URLS.BULK_CREATE, data);
+    return {
+      success: true,
+      data: response.data,
+    };
+  } catch (error) {
+    console.error("Bulk Task API Error:", error);
+
+    let message = "Bulk task creation failed";
+
+    if (error.response?.data?.detail) {
+      message = error.response.data.detail;
+    } else if (error.response?.data) {
+      message = JSON.stringify(error.response.data);
+    }
+
+    return {
+      success: false,
+      message,
+    };
+  }
+}
+
+
 
 
 
@@ -198,19 +227,8 @@ export const deleteTask = async (id) => {
 
 
 
-// BULK CREATE
-export const bulkCreateTask = (data) =>
-  apiClient.post("/tasks/bulk-create/", data);
 
-// ADD COMMENT
-export const createComment = (data) =>
-  apiClient.post("/comments/", data);
 
-// UPLOAD FILE
-export const uploadFile = (formData) =>
-  apiClient.post("/files/", formData, {
-    headers: { "Content-Type": "multipart/form-data" }
-  });
 
 
 
