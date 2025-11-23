@@ -92,10 +92,10 @@ function TaskModal({ taskId, onClose, onUpdate }) {
                   {task.priority}
                 </span>
               </p>
-              <p><strong>Assigned To:</strong> {task.assigned_to || "Not assigned"}</p>
-              <p><strong>Created By:</strong> {task.created_by}</p>
-              <p><strong>Created At:</strong> {formatDate(task.created_at)}</p>
-              <p><strong>Due Date:</strong> {task.due_date ? formatDate(task.due_date) : "Not set"}</p>
+              <p><strong>Assigned To:</strong> {task?.assigned_to?.username || "Not assigned"}</p>
+              <p><strong>Created By:</strong> {task?.created_by}</p>
+              <p><strong>Created At:</strong> {formatDate(task?.created_at)}</p>
+              <p><strong>Due Date:</strong> {task?.due_date ? formatDate(task?.due_date) : "Not set"}</p>
 
               <div>
                 <strong>Tags:</strong>

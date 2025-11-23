@@ -70,6 +70,8 @@ export async function loginUser(data) {
 
 // GET tasks with pagination, filters, search, ordering
 export async function fetchTasks(params = {}) {
+    console.log("params",params);
+    
   try {
     const response = await apiClient.get(TASK_URLS.LIST_CREATE, { params });
 
@@ -235,3 +237,46 @@ export async function fetchAllTags() {
     };
   }
 }
+
+
+
+
+// fetch user profile
+export const fetchProfile = async () => {
+  try {
+    const res = await apiClient.get(AUTH_URLS.ME);
+    console.log("response",res);
+    
+    return { success: true, data: res.data };
+  } catch (err) {
+    return { success: false, message: err.response?.data?.message || err.message };
+  }
+};
+
+
+// fetch all users
+export const fetchUsers = async () => {
+  try {
+    const res = await apiClient.get(AUTH_URLS.ALL_USERS);
+    console.log("users response",res);
+    return { success: true, data: res.data };
+    } catch (err) {
+    return { success: false, message: err.response?.data?.message || err.message }; 
+    }
+};
+
+
+
+// assign user to task
+export const assignUserToTask = async (userId, taskId) => {
+    console.log("user id ",userId,taskId);
+    
+  try {
+    const res = await apiClient.post(TASK_URLS.ASSIGN_USER(taskId, userId));
+    return { success: true, data: res.data };
+  } catch (err) {
+    console.error(err);
+    return { success: false, message: err.response?.data || err.message };
+  }
+};
+

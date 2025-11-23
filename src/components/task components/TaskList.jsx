@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import TaskModal from "./TaskModal";
 import TaskForm from "./TaskForm";
 import BulkCreateModal from "./BulkCreateModal";
+import AssignUserModal from "./AssignUserModal";
 import { fetchTasks } from "../api/api_functions";
 
 function TaskList() {
@@ -12,11 +13,17 @@ function TaskList() {
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [showFormModal, setShowFormModal] = useState(false);
   const [showBulkModal, setShowBulkModal] = useState(false);
+  const [showAssignModal, setShowAssignModal] = useState(false); // NEW: assign user modal
   const [searchQuery, setSearchQuery] = useState("");
+  const [showDeleted, setShowDeleted] = useState(false); // NEW: toggle for deleted tasks
 
   const loadTasks = async (filters = {}) => {
     setLoading(true);
-    const res = await fetchTasks(filters);
+
+    // Add deleted filter to API params
+    const params = { ...filters, include_deleted: showDeleted ? "true" : "false" };
+
+    const res = await fetchTasks(params);
     if (res.success) {
       setTasks(res.data);
       setPagination(res.pagination);
@@ -28,7 +35,7 @@ function TaskList() {
 
   useEffect(() => {
     loadTasks({ search: searchQuery });
-  }, [searchQuery]);
+  }, [searchQuery, showDeleted]);
 
   const handlePageChange = (url) => {
     if (!url) return;
@@ -45,7 +52,8 @@ function TaskList() {
 
   return (
     <div className="p-4">
-      <div className="flex flex-col sm:flex-row justify-between mb-4 gap-2">
+      {/* Search & Action Buttons */}
+      <div className="flex flex-col sm:flex-row justify-between mb-4 gap-2 items-center">
         <input
           type="text"
           placeholder="Search tasks..."
@@ -54,7 +62,16 @@ function TaskList() {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
 
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+          <label className="flex items-center gap-1 text-sm">
+            <input
+              type="checkbox"
+              checked={showDeleted}
+              onChange={() => setShowDeleted(!showDeleted)}
+              className="accent-blue-600"
+            />
+            Show Deleted
+          </label>
           <button
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             onClick={() => setShowFormModal(true)}
@@ -70,6 +87,7 @@ function TaskList() {
         </div>
       </div>
 
+      {/* Task Grid */}
       {loading ? (
         <p className="text-center py-4">Loading...</p>
       ) : tasks.length === 0 ? (
@@ -82,7 +100,7 @@ function TaskList() {
               className="border p-4 rounded-lg shadow-sm hover:shadow-md cursor-pointer transition"
               onClick={() => {
                 setSelectedTask(task.id);
-                setShowTaskModal(true);
+                if (!showDeleted) setShowTaskModal(true);
               }}
             >
               <div className="flex justify-between items-center mb-2">
@@ -112,6 +130,20 @@ function TaskList() {
               <p className="text-sm text-gray-600">
                 Priority: <span className="capitalize">{task.priority}</span>
               </p>
+
+              {/* Assign User Button */}
+              {!showDeleted && (
+                <button
+                  className="px-2 py-1 bg-indigo-600 text-white text-xs rounded hover:bg-indigo-700 mt-2"
+                  onClick={(e) => {
+                    e.stopPropagation(); // prevent opening task modal
+                    setSelectedTask(task.id);
+                    setShowAssignModal(true);
+                  }}
+                >
+                  Assign User
+                </button>
+              )}
             </div>
           ))}
         </div>
@@ -137,12 +169,15 @@ function TaskList() {
         </div>
       )}
 
-      {/* Task Modal */}
+      {/* Modals */}
       {showTaskModal && (
-        <TaskModal taskId={selectedTask} onClose={() => setShowTaskModal(false)} onUpdate={() => loadTasks({ search: searchQuery })}/>
+        <TaskModal
+          taskId={selectedTask}
+          onClose={() => setShowTaskModal(false)}
+          onUpdate={() => loadTasks({ search: searchQuery })}
+        />
       )}
 
-      {/* Create Task Modal */}
       {showFormModal && (
         <TaskForm
           onSuccess={() => {
@@ -153,7 +188,6 @@ function TaskList() {
         />
       )}
 
-      {/* Bulk Task Modal */}
       {showBulkModal && (
         <BulkCreateModal
           onSuccess={() => {
@@ -161,6 +195,14 @@ function TaskList() {
             setShowBulkModal(false);
           }}
           onClose={() => setShowBulkModal(false)}
+        />
+      )}
+
+      {showAssignModal && (
+        <AssignUserModal
+          taskId={selectedTask}
+          onClose={() => setShowAssignModal(false)}
+          onSuccess={() => loadTasks({ search: searchQuery })}
         />
       )}
     </div>

@@ -52,7 +52,9 @@ function TaskForm({ task = null, onClose, onSuccess }) {
     try {
       const res = await handleTaskSubmit(task?.id, payload);
       if (res.success) {
+        alert("🎉 Task saved successfully!");
         onSuccess();
+        
       } else {
         alert(res.message);
       }
