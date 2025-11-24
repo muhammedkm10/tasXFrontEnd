@@ -1,5 +1,5 @@
 import  {apiClientMultipart ,apiClient}  from './services';
-import { API_BASE_URL, AUTH_URLS, TASK_URLS ,COMMENT_URLS} from './apiUrls';
+import { API_BASE_URL, AUTH_URLS, TASK_URLS ,COMMENT_URLS ,FILE_URLS,ANALYTICS_URLS} from './apiUrls';
 
 
 // register user function
@@ -291,6 +291,8 @@ export const assignUserToTask = async (userId, taskId) => {
     
   try {
     const res = await apiClient.post(TASK_URLS.ASSIGN_USER(taskId, userId));
+    console.log("response in assgnement",res);
+    
     return { success: true, data: res.data };
   } catch (err) {
     console.error(err);
@@ -358,5 +360,128 @@ export async function deleteComment(taskId, commentId) {
   } catch (error) {
     console.error("Delete Comment API Error:", error);
     return { success: false, message: error.response?.data?.detail || "Failed to delete comment" };
+  }
+}
+
+
+
+
+
+////////////////////////////////////////////////   task files  //////////////////////////////////////////////
+// fetch tasks
+export const getTaskFiles = async (taskId) => {
+  try {
+    const res = await apiClient.get(FILE_URLS.GET_FILES(taskId));
+    console.log("response",res);
+    return { success: true, data: res.data };
+  } catch (error) {
+    console.error("File Fetch Error:", error);
+    return { success: false };
+  }
+};
+
+
+
+// upload file
+export const uploadTaskFile = async ({ taskId, file }) => {
+  try {
+    const formData = new FormData();
+    formData.append("task_id", taskId);
+    formData.append("file", file);
+    const res = await apiClient.post(FILE_URLS.UPLOAD_FILE, formData, {
+      headers: { "Content-Type": "multipart/form-data" }
+    });
+    return { success: true, data: res.data };
+  } catch (error) {
+    console.error("File Upload Error:", error);
+    return { success: false, message: error.response?.data };
+  }
+};
+
+
+
+// delet task file
+export const deleteTaskFile = async (fileId) => {
+  try {
+    await apiClient.delete(FILE_URLS.DELETE_FILE(fileId));
+    return { success: true };
+  } catch (error) {
+    console.error("File Delete Error:", error);
+    return { success: false };
+  }
+};
+
+
+
+
+//////////////////////////////////////////////////////   analytical function  //////////////////////////////////
+export async function fetchAnalyticsOverview() {
+  try {
+    const response = await apiClient.get(ANALYTICS_URLS.OVERVIEW);
+    return {
+      success: true,
+      data: response.data,
+    };
+  } catch (error) {
+    console.log("Analytics Overview Error:", error);
+    return {
+      success: false,
+      message: error.response?.data?.detail || "Failed to fetch overview",
+    };
+  }
+}
+
+
+
+
+export async function fetchUserPerformance() {
+  try {
+    const response = await apiClient.get(ANALYTICS_URLS.USER_PERFORMANCE);
+    return {
+      success: true,
+      data: response.data,
+    };
+  } catch (error) {
+    console.log("User Performance Error:", error);
+    return {
+      success: false,
+      message: error.response?.data?.detail || "Failed to fetch performance data",
+    };
+  }
+}
+
+
+
+export async function fetchTaskTrends() {
+  try {
+    const response = await apiClient.get(ANALYTICS_URLS.TRENDS);
+    return {
+      success: true,
+      data: response.data,
+    };
+  } catch (error) {
+    console.log("Trend Analytics Error:", error);
+    return {
+      success: false,
+      message: error.response?.data?.detail || "Failed to fetch trends",
+    };
+  }
+}
+
+
+
+export async function exportTasksData() {
+  try {
+    const response = await apiClient.get(ANALYTICS_URLS.EXPORT);
+    return {
+      success: true,
+      data: response.data,
+    };
+  } catch (error) {
+    console.log("Export Error:", error);
+    return {
+      success: false,
+      message: error.response?.data?.detail || "Failed to export tasks",
+    };
   }
 }

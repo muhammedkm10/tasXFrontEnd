@@ -35,7 +35,7 @@ function TaskDetailsContainer({ task }) {
         {activeTab === "comments" ? (
           <TaskComments taskId={task.id } />
         ) : (
-          <TaskFiles files={task.files || []} />
+          <TaskFiles taskId={task.id || []} />
         )}
       </div>
     </div>

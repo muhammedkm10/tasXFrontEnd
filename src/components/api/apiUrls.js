@@ -28,7 +28,7 @@ TAG_LIST : '/tasks-routes/tags/',
 
 };
 
-
+// comment urls
 export const COMMENT_URLS = {
     LIST :(taskId)=>`/tasks-routes/comments/?task_pk=${taskId}`,
     CREATE_COMMENT : `/tasks-routes/comments/`,
@@ -37,3 +37,18 @@ export const COMMENT_URLS = {
 
 
     }
+
+// file apis
+export const FILE_URLS = {
+    UPLOAD_FILE : `/tasks-routes/file-upload/`,
+    DELETE_FILE : (file_id) => `/tasks-routes/file-upload/${file_id}/`,
+    GET_FILES : (taskId) => `/tasks-routes/file-upload/?task_pk=${taskId}`,
+
+}
+// analytics urls
+export const ANALYTICS_URLS = {
+  OVERVIEW: "/auth-routes/analytics/overview/",
+  USER_PERFORMANCE: "/auth-routesanalytics/user-performance/",
+  TRENDS: "/auth-routes/analytics/trends/",
+  EXPORT: "/auth-routes/analytics/export/",
+};

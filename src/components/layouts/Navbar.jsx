@@ -28,7 +28,10 @@ export default function Navbar() {
 
       {/* Right Section */}
       <div className="flex gap-6 text-gray-700 font-medium items-center">
+        <Link to="/home" className="text-yellow-900 ">Home</Link>
+
         <Link to="/tasks" className="hover:text-blue-600">Tasks</Link>
+
         <Link to="/profile" className="hover:text-blue-600">Profile</Link>
 
         {/* Logout Button */}
