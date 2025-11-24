@@ -27,3 +27,13 @@ BULK_CREATE: '/tasks-routes/tasks/bulk-create/',
 TAG_LIST : '/tasks-routes/tags/',
 
 };
+
+
+export const COMMENT_URLS = {
+    LIST :(taskId)=>`/tasks-routes/comments/?task_pk=${taskId}`,
+    CREATE_COMMENT : `/tasks-routes/comments/`,
+    UPDATE_DELETE_COMMENT : (comment_id)=> `/tasks-routes/comments/${comment_id}/`,
+
+
+
+    }

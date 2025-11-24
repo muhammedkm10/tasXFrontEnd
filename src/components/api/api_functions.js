@@ -1,5 +1,5 @@
 import  {apiClientMultipart ,apiClient}  from './services';
-import { API_BASE_URL, AUTH_URLS, TASK_URLS } from './apiUrls';
+import { API_BASE_URL, AUTH_URLS, TASK_URLS ,COMMENT_URLS} from './apiUrls';
 
 
 // register user function
@@ -298,3 +298,65 @@ export const assignUserToTask = async (userId, taskId) => {
   }
 };
 
+
+
+///////////////////////////////////////////////// comment api functions /////////////////////////////////////////
+
+
+// Fetch all comments for a task
+export async function fetchComments(taskId) {
+  try {
+    const response = await apiClient.get(COMMENT_URLS.LIST(taskId));
+    console.log("response",response);
+    
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Fetch Comments API Error:", error);
+    return { success: false, message: error.response?.data?.detail || "Failed to fetch comments" };
+  }
+}
+
+// Create a new comment for a task
+export async function createComment(taskId, content) {
+  console.log("my task",taskId,content);
+  
+
+  try {
+    const response = await apiClient.post(COMMENT_URLS.CREATE_COMMENT,  {
+  task_id: taskId,
+  content
+});
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Create Comment API Error:", error);
+    return { success: false, message: error.response?.data?.detail || "Failed to create comment" };
+  }
+}
+
+// Update an existing comment
+export async function updateComment(taskId, commentId, content) {
+  console.log("comment",taskId,commentId,content);
+  
+  try {
+     console.log({"task_id":taskId, content });
+    const response = await apiClient.patch(COMMENT_URLS.UPDATE_DELETE_COMMENT(commentId), 
+    {"task_id":taskId, content });
+   
+    
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Update Comment API Error:", error);
+    return { success: false, message: error.response?.data?.detail || "Failed to update comment" };
+  }
+}
+
+// Delete a comment (soft delete)
+export async function deleteComment(taskId, commentId) {
+  try {
+    await apiClient.delete(COMMENT_URLS.UPDATE_DELETE_COMMENT(commentId));
+    return { success: true };
+  } catch (error) {
+    console.error("Delete Comment API Error:", error);
+    return { success: false, message: error.response?.data?.detail || "Failed to delete comment" };
+  }
+}

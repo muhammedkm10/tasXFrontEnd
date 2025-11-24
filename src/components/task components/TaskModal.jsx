@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { fetchSingleTask, deleteTask } from "../api/api_functions";
 import TaskForm from "./TaskForm";
+import TaskDetailsContainer from "./TaskDetailContainer";
+
 
 function TaskModal({ taskId, onClose, onUpdate }) {
   const [task, setTask] = useState(null);
@@ -96,7 +98,6 @@ function TaskModal({ taskId, onClose, onUpdate }) {
               <p><strong>Created By:</strong> {task?.created_by}</p>
               <p><strong>Created At:</strong> {formatDate(task?.created_at)}</p>
               <p><strong>Due Date:</strong> {task?.due_date ? formatDate(task?.due_date) : "Not set"}</p>
-
               <div>
                 <strong>Tags:</strong>
                 {task.tags && task.tags.length > 0 ? (
@@ -112,26 +113,11 @@ function TaskModal({ taskId, onClose, onUpdate }) {
                   </div>
                 ) : <span> None</span>}
               </div>
+                 {/* Bottom Section */}
+              <TaskDetailsContainer task={task} />
+              
 
-              <div>
-                <strong>Files:</strong>
-                {task.files.length > 0 ? (
-                  <ul className="list-disc ml-5 mt-1">
-                    {task.files.map((f) => (
-                      <li key={f.id}>
-                        <a
-                          href={f.file_url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-blue-600 hover:underline"
-                        >
-                          {f.filename}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                ) : <span> None</span>}
-              </div>
+              
             </div>
 
             {/* Actions */}

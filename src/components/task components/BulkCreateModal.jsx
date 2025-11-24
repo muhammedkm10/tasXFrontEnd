@@ -38,7 +38,8 @@ const payload = tasks.map((t) => ({
 setLoading(true);  
 try {  
   const res = await bulkCreateTask( payload );  
-  if (res.success) {  
+  if (res.success) { 
+    alert("Tasks created successfully!"); 
     onSuccess();  
     onClose();  
   } else {  
